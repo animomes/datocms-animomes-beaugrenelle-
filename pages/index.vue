@@ -1,107 +1,24 @@
 <template>
   <div>
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container">
-          <div v-for="post in posts.slice(0, 2)" v-bind:key="post.slug">
-            <div class="columns">
-              <div class="column is-8 is-offset-2">
-                <figure class="image">
-                  <datocms-image :data="post.coverImage.responsiveImage" />
-                </figure>
-              </div>
-            </div>
-
-            <section class="section">
-              <div class="columns">
-                <div class="column is-8 is-offset-2">
-                  <div class="content is-medium">
-                    <h2 class="subtitle is-4">
-                      {{ formatDate(post.publicationDate) }}
-                    </h2>
-                    <h1 class="title">
-                      <nuxt-link :to="`/posts/${post.slug}`">{{
-                        post.title
-                      }}</nuxt-link>
-                    </h1>
-                    <div v-html="post.excerpt" />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div class="is-divider" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- newsletter -->
-    <section class="section">
-      <div class="columns">
-        <div class="column is-10 is-offset-1">
-          <div class="container has-text-centered is-fluid">
-            <div class="hero is-light">
-              <div class="hero-body">
-                <h2 class="title is-4">Sign up for our newsletter</h2>
-                <div class="column is-6 is-offset-3">
-                  <div class="field has-addons has-addons-centered">
-                    <div class="control is-expanded">
-                      <input
-                        class="input"
-                        type="text"
-                        placeholder="Email address"
-                      />
-                    </div>
-                    <div class="control">
-                      <a class="button is-info">
-                        Subscribe
-                      </a>
-                    </div>
-                  </div>
-                </div>
+    <section class="hero h-screen" v-if="homepage">
+      <Hero :cover="cover">
+        <div class="container relative text-white z-20 mx-auto">
+          <div class="items-center flex flex-wrap">
+            <div class="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
+              <div class="pr-12">
+                <h1 class="text-white font-semibold text-5xl">
+                  Your story starts with us.
+                </h1>
+                <p class="mt-4 text-lg text-gray-300">
+                  This is a simple example of a Landing Page you can build using
+                  Tailwind Starter Kit. It features multiple CSS components
+                  based on the Tailwindcss design system.
+                </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Articles -->
-
-    <section class="hero ">
-      <div class="hero-body">
-        <div class="container">
-          <div
-            v-for="group in Math.ceil((posts.length - 2) / 2)"
-            v-bind:key="group"
-          >
-            <section class="section">
-              <div class="columns is-variable is-8">
-                <div
-                  v-for="(post, index) in posts.slice(group * 2, group * 2 + 2)"
-                  v-bind:key="post.slug"
-                  :class="['column is-5', index === 0 && 'is-offset-1']"
-                >
-                  <div class="content is-medium">
-                    <h2 class="subtitle is-5 has-text-grey">
-                      {{ formatDate(post.publicationDate) }}
-                    </h2>
-                    <h1 class="title has-text-black is-3">
-                      <nuxt-link :to="`/posts/${post.slug}`">{{
-                        post.title
-                      }}</nuxt-link>
-                    </h1>
-                    <div class="has-text-dark" v-html="post.excerpt" />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div class="is-divider" />
-          </div>
-        </div>
-      </div>
+      </Hero>
     </section>
   </div>
 </template>
@@ -112,15 +29,21 @@ import { toHead } from 'vue-datocms'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import { HOME_PAGE_QUERY } from '@/queries'
+import Hero from '~/components/Hero'
 
 export default {
+  components: { Hero },
   async asyncData({ params }) {
     const data = await request({
       query: HOME_PAGE_QUERY
     })
-    console.log(data)
 
     return { ready: !!data, ...data }
+  },
+  computed: {
+    cover() {
+      return this.homepage.cover.responsiveImage.src
+    }
   },
   methods: {
     formatDate(date) {

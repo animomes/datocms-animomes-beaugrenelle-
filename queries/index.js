@@ -1,5 +1,16 @@
 import { gql, imageFields, seoMetaTagsFields } from '~/lib/datocms'
 
+export const SOCIALS_QUERY = gql`
+  {
+    homepage {
+      socials {
+        url
+        label
+      }
+    }
+  }
+`
+
 export const HOME_PAGE_QUERY = gql`
   {
     site: _site {
@@ -11,6 +22,11 @@ export const HOME_PAGE_QUERY = gql`
       socials {
         url
         label
+      }
+      cover {
+        responsiveImage {
+          ...imageFields
+        }
       }
     }
     posts: allPosts(first: 10, orderBy: _firstPublishedAt_DESC) {
